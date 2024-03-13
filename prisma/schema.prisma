@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Status {
+  Y
+  W
+  N
+  D
+}
+
+enum Tier {
+  BRONZE
+  SILVER
+  GOLD
+  DIAMOND
+  MASTER
+}
+
+model User {
+  userSeq                 String                   @id @unique @map("user_seq")
+  name                    String                   @unique
+  status                  Status                   @default(Y)
+  createdAt               DateTime                 @default(now()) @map("created_at")
+  updatedAt               DateTime                 @updatedAt @map("updated_at")
+  rank                    Rank?
+  questionLearningManages QuestionLearningManage[]
+
+  @@map("BK_MB_USER")
+}
+
+model Friend {
+  friendUserSeq String   @map("friend_user_seq")
+  userSeq       String   @map("user_seq")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@unique([userSeq, friendUserSeq], name: "friendSeq")
+  @@index([userSeq])
+  @@map("BK_MB_FRIEND")
+}
+
+model Rank {
+  id        Int      @id @unique @default(autoincrement())
+  score     Int      @default(0)
+  reBirth   Int      @default(0) @map("re_birth")
+  userSeq   String   @unique @map("user_seq")
+  tier      Tier     @default(BRONZE)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  rankTier  RankTier @relation(fields: [tier], references: [tier], onDelete: Cascade)
+  user      User     @relation(fields: [userSeq], references: [userSeq], onDelete: Cascade)
+
+  @@map("BK_MB_RANK")
+}
+
+model RankTier {
+  tier      Tier     @id @unique
+  tierName  String   @map("tier_name")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  rank      Rank[]
+
+  @@map("BK_MB_RANK_TIER")
+}
+
+model QuestionLearningManage {
+  userSeq     String   @map("user_seq")
+  questionSeq String   @map("question_seq")
+  score       Int      @default(0)
+  retryCount  Int      @default(0) @map("retry_cnt")
+  isShow      Boolean  @default(false) @map("is_show")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  user        User     @relation(fields: [userSeq], references: [userSeq])
+
+  @@unique([userSeq, questionSeq], name: "historySeq")
+  @@index([userSeq])
+  @@map("BK_MB_QUESTION_LEARNING_MANAGE")
+}
