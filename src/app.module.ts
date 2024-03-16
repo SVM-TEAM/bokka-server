@@ -3,6 +3,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { NewsModule } from './news/news.module';
 import { ConfigModule } from '@nestjs/config';
+import { UserModule } from './user/user.module';
+import { CqrsModule } from './public/cqrs/cqrs.module';
 
 @Module({
   imports: [
@@ -10,6 +12,8 @@ import { ConfigModule } from '@nestjs/config';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    UserModule,
+    CqrsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
