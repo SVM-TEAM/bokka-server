@@ -1,6 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
 import { NewsService } from './news.service';
-import { map } from 'rxjs';
 
 @Controller('news')
 export class NewsController {
