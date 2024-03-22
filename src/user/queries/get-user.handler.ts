@@ -14,10 +14,14 @@ export class GetUserQueryHandler implements IQueryHandler<GetUserQuery> {
         userSeq,
       },
       select: {
-        name: true,
+        userProfile: {
+          select: {
+            nickName: true,
+          },
+        },
       },
     });
 
-    return { name: user.name };
+    return { name: user.userProfile.nickName };
   }
 }
