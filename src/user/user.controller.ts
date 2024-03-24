@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   HttpCode,
@@ -19,11 +20,11 @@ export class UserController {
     private readonly commandBus: CommandBus,
   ) {}
 
-  @UseGuards(JwtAuthGuard)
   @HttpCode(201)
   @Post('init')
-  async initUser(@Req() req: ExpressRequest & { user: { userSeq: string } }) {
-    await this.commandBus.execute(new UserInitCommand(req.user.userSeq));
+  async initUser(@Body() dto: { userSeq: string }) {
+    console.log(dto);
+    await this.commandBus.execute(new UserInitCommand(dto.userSeq));
   }
 
   @UseGuards(JwtAuthGuard)
