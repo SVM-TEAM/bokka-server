@@ -8,7 +8,7 @@ export class UserInitCommandHandler
 {
   constructor(private readonly prisma: PrismaService) {}
 
-  async execute(command: UserInitCommand): Promise<any> {
+  async execute(command: UserInitCommand): Promise<void> {
     await this.prisma.user.create({ data: { userSeq: command.userSeq } });
   }
 }
